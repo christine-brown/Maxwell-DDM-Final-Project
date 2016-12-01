@@ -1,0 +1,69 @@
+---
+title: "Untitled"
+author: "Christine Brown"
+date: "December 1, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library( dplyr )
+
+library( tidyr )
+
+library( lubridate)
+
+dat <- readRDS(
+
+        gzcon(
+
+          url(
+
+          "https://cdn.rawgit.com/fjsantam/Maxwell-DDM-Final-Project/master/NYC%20Bike%20Share%20Data.rds"
+
+            )
+
+          )
+
+        )
+
+# gzcon is a built-in decompressor that must be run when loading a .RDS straight from a website.
+
+# more info here: https://mgimond.github.io/ES218/Week02b.html
+
+
+dat <- dat %>% separate( starttime, c("start.date", "start.time"), sep = " " )
+
+dat <- dat %>% separate( stoptime, c("stop.date", "stop.time"), sep = " " )
+
+
+# Confirm that the  dataframe has the correct new columns
+
+head( dat )
+
+# Separate month day and year
+
+dat$start.date <- as.Date(dat$start.date, "%m/%d/%y")
+
+#plot the trips each day
+
+
+plot(table(sort(day(dat$start.date),decreasing=FALSE)),
+     type="l",
+     axes=TRUE,
+     xlim=c(1,31),
+     ylim=c(0,20000),
+     xlab="Day",
+     ylab="Numer of Rides",
+     col="deepskyblue1",
+     pch=16,
+     cex=.5,
+     main="Trips per day of Month")
+
+plot(table(sort(wday(dat$start.date, label=TRUE), decreasing=FALSE)), type="h")
+```
+
